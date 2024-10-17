@@ -1,0 +1,47 @@
+_format_version: "3.0"
+
+plugins:
+- name: jwt
+  service: user-service
+
+consumers:
+  - username: starboardsocial
+    jwt_secrets:
+      - algorithm: RS256
+        key: "auth.starboardsocial.nl"
+        secret: secret
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr4UH0g4L421nmooE5jlD
+          vCNeoMZuVF7FImDEM+tV0ONKjFf1x2uFz89I1MFfVSDwQqq7TreFKeUXwtjZW97N
+          o6simSbip01f5RaYrd6jJUBVr8ZMv+iI8QxPTf3BzpscmR9LKbFdWikyL8/04KFV
+          gejv/pge9fRPhiPoD0jLVMTN2844egdNBUvtSJwjd1QF4q9XDkU97vEhBOOZC8on
+          TRo3LaKFb0mxNsvBTnZzCafLQ3yHDGb3O/ncycEsrVG3M7cmfpgUzbvE4IZ+U2Ap
+          7p3cwMSbNl7Sy9lW3ooNwO+qSVEDgjPxrLcyUObTWjAtKn/750+Hd3oIWDsiToTR
+          3QIDAQAB
+          -----END PUBLIC KEY-----
+
+# vaults:
+# - config:
+#     prefix: null
+#   description: Store secrets in environment variables
+#   name: env
+#   prefix: env
+
+
+services:
+  - name: auth-service
+    url: http://host.docker.internal:9000
+    routes:
+      - name: auth-service
+        strip_path: false
+        paths:
+          - /auth
+
+  - name: user-service
+    url: http://host.docker.internal:9001
+    routes:
+      - name: user-service
+        strip_path: false
+        paths:
+          - /user
