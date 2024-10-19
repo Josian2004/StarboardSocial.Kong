@@ -6,10 +6,11 @@ networks:
 
 services:
   kong:
-    build: .
-    container_name: starboardsocial_kong
+    image: registry.starboardsocial.nl/kong:prod
+    container_name: 'StarboardSocial-Kong'
     networks:
-      - kong-net
+      - starboardsocial_net
+    restart: unless-stopped
     environment:
       KONG_DATABASE: off
       KONG_DECLARATIVE_CONFIG: kong.yml

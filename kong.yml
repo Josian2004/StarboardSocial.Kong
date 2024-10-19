@@ -23,7 +23,7 @@ consumers:
 
 services:
   - name: auth-service
-    url: http://host.docker.internal:9000
+    url: http://authservice:9000
     routes:
       - name: auth-service
         strip_path: false
@@ -31,7 +31,7 @@ services:
           - /auth
 
   - name: user-service
-    url: http://host.docker.internal:9001
+    url: http://userservice:9001
     routes:
       - name: user-service
         strip_path: false
