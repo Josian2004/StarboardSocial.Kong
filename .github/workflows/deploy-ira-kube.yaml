@@ -1,0 +1,43 @@
+name: Deploy to IRA server using Kubernetes
+
+on:
+  workflow_call:
+    
+jobs:
+  deploy:
+    name: Deploy to IRA server using Kubernetes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Copy Kubernetes files to remote server
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: ./kubernetes
+          remote: /home/starboard/kong/kubernetes
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+
+      - name: Copy Routing Kubernetes files to remote server
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: ./kubernetes/routing
+          remote: /home/starboard/kong/kubernetes
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          
+      - name: SSH to IRA and deploy
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd /home/starboard &&
+            mkdir -p kong/kubernetes &&
+            cd kong/kubernetes &&
+            kubectl apply -f . -n starboardsocial
